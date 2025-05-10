@@ -1,0 +1,43 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <title>Админ</title>
+</head>
+<body>
+
+Добро пожаловать на главную страницу ADMIN
+
+<p th:text="${'ID: '+person.getId()}">VALUE</p>
+<p th:text="${'Имя: '+person.getName()}">VALUE</p>
+<p th:text="${'Логин: '+person.getLogin()}">VALUE</p>
+<p th:text="${'Пароль: '+person.getPassword()}">VALUE</p>
+<p th:text="${'Почта: '+person.getEmail()}">VALUE</p>
+<a>Роли: </a><a th:text="${person.getRoles()}" >VALUE</a>
+
+
+<br/>
+<hr/>
+<a th:href="@{/admin/edit/(id=${person.getId()})}">Изменить данные</a>
+<a href="/">Вернуться на главную</a>
+<a th:href="@{/logout}">Разлогиниться</a>
+<form th:method="DELETE" th:action="@{/admin/(id=${person.getId()})}">
+    <input type="submit" value="Удалить аккаунт">
+</form>
+
+<br/>
+<hr/>
+
+<form th:method="GET" th:action="@{/admin/edit/}">
+    <label for="id">Укажите ID пользователя для изменения</label>
+    <input type="text" name="id" id="id">
+    <button type="submit">Изменить данные для данного ID</button>
+</form>
+
+<form th:method="DELETE" th:action="@{/admin/}">
+    <label for="idDel">Укажите ID пользователя для удаления</label>
+    <input type="text" name="id" id="idDel">
+    <button type="submit">Удалить пользователя по ID</button>
+</form>
+
+</body>
+</html>

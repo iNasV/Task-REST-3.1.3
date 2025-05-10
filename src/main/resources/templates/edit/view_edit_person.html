@@ -1,0 +1,41 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Настройки</title>
+</head>
+<body>
+
+Страница изменения данных пользователя <p th:text="${person.getLogin()}">VALUE</p>.
+
+<form th:method="PUT" th:action="@{/admin/edit/{id}(id=${person.getId()})}" th:object="${person}">
+    <label for="name">Новое имя : </label>
+    <input type="text" th:field="*{name}" id="name">
+    <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" >Ошибка имени</div>
+
+    <label for="login">Новый логин : </label>
+    <input type="text" th:field="*{login}" id="login">
+    <div th:if="${#fields.hasErrors('login')}" th:errors="*{login}" >Ошибка логина</div>
+
+    <label for="password">Новый пароль : </label>
+    <input type="text" th:field="*{password}" id="password">
+    <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" >Ошибка пароля</div>
+
+    <label for="email">Новая почта : </label>
+    <input type="text" th:field="*{email}" id="email">
+    <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" >Ошибка почты</div>
+
+    <label>Назначить роль : </label>
+    <div th:each="roleObj:${allRoles}">
+        <input type="checkbox"
+            th:value="${roleObj.id}"
+            th:field="*{roles}"
+            id="role__[[${roleObj.id}]]"/>
+        <label th:for="'role__' + ${roleObj.id}" th:text="${roleObj.role}"></label>
+    </div>
+
+    <input type="submit" value="Применить"/>
+</form>
+
+</body>
+</html>

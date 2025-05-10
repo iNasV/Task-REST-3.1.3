@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Главная</title>
+</head>
+<body>
+
+<form>
+    <label> ID: </label>
+    <label> Имя: </label>
+    <label> Почта: </label>
+</form>
+
+<br/>
+
+<div th:each="personElem : ${persons}">
+    <a th:href="@{/{id}(id=${personElem.id})}" th:text="${personElem.toString()}">value</a>
+</div>
+
+<br/>
+<hr/>
+
+<a href="/admin/new"> Зарегистрировать </a>
+<a th:href="@{/logout}">Разлогиниться</a>
+
+</body>
+</html>
