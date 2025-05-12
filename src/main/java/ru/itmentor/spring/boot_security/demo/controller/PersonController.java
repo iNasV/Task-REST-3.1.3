@@ -1,11 +1,16 @@
 package ru.itmentor.spring.boot_security.demo.controller;
 
 import jakarta.validation.Valid;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.itmentor.spring.boot_security.demo.model.Person;
+import ru.itmentor.spring.boot_security.demo.security.PersonDetails;
 import ru.itmentor.spring.boot_security.demo.service.PersonService;
 import ru.itmentor.spring.boot_security.demo.service.RoleService;
 import ru.itmentor.spring.boot_security.demo.util.PersonValidator;
@@ -19,30 +24,39 @@ public class PersonController {
     private final PersonService personService;
     private final RoleService roleService;
     private final PersonValidator personValidator;
+    private final PasswordEncoder passwordEncoder;
 
-    public PersonController(PersonService personService, RoleService roleService, PersonValidator personValidator) {
+    public PersonController(PersonService personService, RoleService roleService, PersonValidator personValidator, PasswordEncoder passwordEncoder) {
         this.personService = personService;
         this.roleService = roleService;
         this.personValidator = personValidator;
+        this.passwordEncoder = passwordEncoder;
     }
 
     // Определение типа главной страницы в соответствии с ролью
     @GetMapping("/{id}")
-    public String showInfo(Model model,@PathVariable("id") long id) {
+    public String showInfo(Model model, @PathVariable("id") long id) {
         Person person = personService.findOne(id);
         model.addAttribute("person", person);
         String hightRole = person.getRoles().get(0).toString();
         if (hightRole.equals("ROLE_ADMIN")) {
-            String redirect = "redirect:/admin/"+person.getId();
+            String redirect = "redirect:/admin/" + person.getId();
             return redirect;
         }
-        String redirect = "redirect:/user/"+person.getId();
+        String redirect = "redirect:/user/" + person.getId();
         return redirect;
     }
 
     // главная страница аккаунта АДМИН
     @GetMapping("/admin/{id}")
-    public String showAdminInfo(Model model,@PathVariable("id") long id) {
+    public String showAdminInfo(Model model, @PathVariable("id") long id) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        try {
+            var user = (User) auth.getPrincipal();
+            return "redirect:/";
+        } catch (ClassCastException e) {  }
+        var principal = (PersonDetails) auth.getPrincipal();
+        if (principal.getPerson().getId()!=id) { return "redirect:/"; }
         Person person = personService.findOne(id);
         model.addAttribute("person", person);
         return "account/admin";
@@ -69,7 +83,14 @@ public class PersonController {
 
     // главная страница аккаунта ЮЗЕР
     @GetMapping("/user/{id}")
-    public String showUserInfo(Model model,@PathVariable("id") long id) {
+    public String showUserInfo(Model model, @PathVariable("id") long id) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        try {
+            var user = (User) auth.getPrincipal();
+            return "redirect:/";
+        } catch (ClassCastException e) {  }
+        var principal = (PersonDetails) auth.getPrincipal();
+        if (principal.getPerson().getId()!=id) { return "redirect:/"; }
         Person person = personService.findOne(id);
         model.addAttribute("person", person);
         return "account/user";
@@ -98,6 +119,8 @@ public class PersonController {
         if (bindingResult.hasErrors()) {
             return "new/view_create_user";
         }
+        var string = passwordEncoder.encode(person.getPassword());
+        person.setPassword(string);
         personService.save(person);
         return "redirect:/";
     }

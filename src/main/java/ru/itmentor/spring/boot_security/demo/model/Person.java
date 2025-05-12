@@ -47,7 +47,6 @@ public class Person {
     @JoinTable(name="person_roles",
         joinColumns = @JoinColumn(name = "person_id"),
         inverseJoinColumns = @JoinColumn(name = "role_id"))
-    @JsonManagedReference
     private List<Role> roles;
 
     public Person() {}

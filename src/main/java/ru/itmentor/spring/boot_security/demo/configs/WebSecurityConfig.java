@@ -41,8 +41,10 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(
                 auth -> auth
                         .requestMatchers("/","/index").permitAll()
+                        .requestMatchers("/API/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/API/**"))
                 .formLogin(
                         login -> login
                                 .successHandler(successUserHandler)
@@ -79,7 +81,7 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 }
