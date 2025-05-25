@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 //import ru.itmentor.spring.boot_security.demo.annotation.person.UniquePersonLoginAndEmail;
+import lombok.experimental.FieldNameConstants;
 import ru.itmentor.spring.boot_security.demo.annotation.person.login.ForbiddenPersonLogins;
 
 import java.util.List;
@@ -17,6 +18,7 @@ import static ru.itmentor.spring.boot_security.demo.model.Role.ROLE_COMPARATOR;
 
 @Entity
 @Table(name = "persons")
+@FieldNameConstants
 //@UniquePersonLoginAndEmail
 public class Person {
 
@@ -83,11 +85,11 @@ public class Person {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Person person = (Person) o;
-        return Objects.equals(id, person.id) && Objects.equals(name, person.name) && Objects.equals(login, person.login) && Objects.equals(password, person.password) && Objects.equals(email, person.email) && Objects.equals(roles, person.roles);
+        return Objects.equals(id, person.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, login, password, email);
+        return Objects.hash(id);
     }
 }

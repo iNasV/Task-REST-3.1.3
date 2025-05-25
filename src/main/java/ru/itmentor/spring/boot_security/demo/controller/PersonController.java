@@ -97,7 +97,7 @@ public class PersonController {
     }
 
     // главная страница приложения
-    @GetMapping()
+    @GetMapping("/")
     public String getHomePage(Model model) {
         List<Person> personList = personService.findAll();
         model.addAttribute("persons", personList);
